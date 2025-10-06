@@ -3,34 +3,63 @@ document.addEventListener("DOMContentLoaded", function() {
     const taskInput = document.getElementById("task-input");
     const taskList = document.getElementById("task-list");
 
-    function addTask() {
-        // obtain the value from input and remove extra spaces
-        let taskText = taskInput.value.trim();
-        if(taskText === "") {
-            alert("enter a task")
+    // Global array to store tasks
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    // Load saved tasks when page loads
+    loadTasks();
+
+    function loadTasks() {
+        tasks.forEach(taskText => addTask(taskText, false));
+    }
+
+    function addTask(taskText, save = true) {
+        // If no taskText is passed (user typed one in)
+        if (!taskText) {
+            taskText = taskInput.value.trim();
+            if (taskText === "") {
+                alert("Please enter a task");
+                return;
+            }
         }
-        // create an li element to be displayed under the button
-        let li = document.createElement("li");
-        li.append(taskText);
-        // crteate a btn to remove tasks
+
+        // Create list item
+        const li = document.createElement("li");
+        li.textContent = taskText;
+
+        // Create remove button
         const btn = document.createElement("button");
         btn.textContent = "Remove";
         btn.classList.add("remove-btn");
-        li.append(btn);
-        // remove a task when the remove btn is clicked
+
+        // Remove task from DOM and storage
         btn.addEventListener("click", () => {
             li.remove();
-        })
+            tasks = tasks.filter(t => t !== taskText);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        });
 
+        // Append button and list item
+        li.appendChild(btn);
         taskList.appendChild(li);
+
+        // Save to local storage if new
+        if (save) {
+            tasks.push(taskText);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        // Clear input field
         taskInput.value = "";
-        
     }
+
+    // Add task on Enter key press
     taskInput.addEventListener("keypress", (event) => {
-        // check when user clicks enter key to add tasts
-        if(event.key == "Enter") {
+        if (event.key === "Enter") {
             addTask();
         }
-    })
+    });
+
+    // Add task on button click
     addButton.addEventListener("click", addTask);
-})
+});
