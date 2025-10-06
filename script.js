@@ -15,11 +15,11 @@ document.addEventListener("DOMContentLoaded", function() {
         // crteate a btn to remove tasks
         const btn = document.createElement("button");
         btn.textContent = "Remove";
-        btn.className = "remove-btn"
+        btn.classList.add("remove-btn");
         li.append(btn);
         // remove a task when the remove btn is clicked
         btn.addEventListener("click", () => {
-            li.remove(taskText);
+            li.remove();
         })
 
         taskList.appendChild(li);
